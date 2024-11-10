@@ -50,7 +50,7 @@ def filter_tickets(description: str) -> str:
         if any(keyword in description for keyword in keywords):
             return category
     
-    return "No category"
+    return "Misc"
 
 
 # endpoint to create profiles
@@ -59,12 +59,18 @@ async def create_profile(profile: Profile, response: Response):
     # check if profile exists
     query = f"SELECT * FROM TicketTable WHERE email = '{profile.email}' LIMIT 1"
     existing_profile = db.load_query_pd(query)
-    if existing_profile.empty:
-        response.status_code = 404
-        return {"message": "Profile not found."}
-    
-    # if profile doesn't exist, create it
-    return JSONResponse(content={"email": profile.email, "name": profile.name})
+    if not existing_profile.empty:
+        response.status_code = 400
+        return {"message": "Profile already exists."}
+
+    # else, doesn't exist so create one
+    profile_data = {"email": profile.email, "name": profile.name}
+    result = db.insert_profile(profile_data)
+    if result:
+        return JSONResponse(content={"message": "Profile created successfully", "profile": result})
+    else:
+        response.status_code = 500
+        return {"message": "Failed to create profile"}
 
 # endpoint to retrieve profile info
 @app.get("/profile/{email}", status_code=200)
