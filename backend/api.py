@@ -53,6 +53,10 @@ def cat_tickets(description: str) -> str:
         # if keyword matches, return the team responsible for this ticket
         if any(keyword in description for keyword in keywords):
             return category
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 0708cd0 (updated api to store profiles in db)
     return "Misc"
 
 
@@ -61,6 +65,7 @@ def cat_tickets(description: str) -> str:
 async def create_profile(profile: Profile, response: Response):
     # check if profile exists
     query = f"SELECT * FROM TicketTable WHERE email = '{profile.email}' LIMIT 1"
+<<<<<<< HEAD
     existing_profile = db.load_all_pd(query)
     if existing_profile.empty:
         response.status_code = 404
@@ -68,6 +73,21 @@ async def create_profile(profile: Profile, response: Response):
     
     # if profile doesn't exist, create it
     return JSONResponse(content={"email": profile.email, "name": profile.name})
+=======
+    existing_profile = db.load_query_pd(query)
+    if not existing_profile.empty:
+        response.status_code = 400
+        return {"message": "Profile already exists."}
+
+    # else, doesn't exist so create one
+    profile_data = {"email": profile.email, "name": profile.name}
+    result = db.insert_profile(profile_data)
+    if result:
+        return JSONResponse(content={"message": "Profile created successfully", "profile": result})
+    else:
+        response.status_code = 500
+        return {"message": "Failed to create profile"}
+>>>>>>> 0708cd0 (updated api to store profiles in db)
 
 # endpoint to retrieve profile info
 @app.get("/profile/{email}", status_code=200)
