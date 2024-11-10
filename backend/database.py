@@ -47,8 +47,8 @@ class TicketDB:
     def create_profile_table(self):
         query = """
         CREATE TABLE IF NOT EXISTS Profiles (
-            email TEXT PRIMARY KEY,
-            name TEXT
+            email NVARCHAR(50) PRIMARY KEY,
+            name NVARCHAR(50)
         )
         """
         with self.conn_lock:
@@ -56,17 +56,6 @@ class TicketDB:
             
             cursor.execute(query)
         self.table_ids["ProfileTable"] = 0
-
-# insert tuple (email,name) that corresponds to profile
-    def insert_profile_tuple(self, profile_data):
-        
-        query = "INSERT INTO ProfileTable (email, name) VALUES (?, ?)"
-        try:
-            self.execute_query(query, (profile_data["email"], profile_data["name"]))
-            return profile_data
-        except Exception as e:
-            print("Error inserting profile:", e)
-            return None
 
     def insert_tuple(self, tup, table_name="TestTable"):
         try:
