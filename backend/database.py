@@ -67,6 +67,19 @@ class TicketDB:
             print("Error inserting profile:", e)
             return None
 
+    def create_profile_table(self):
+        query = """
+        CREATE TABLE IF NOT EXISTS Profiles (
+            email NVARCHAR(50) PRIMARY KEY,
+            name NVARCHAR(50)
+        )
+        """
+        with self.conn_lock:
+            cursor = self.conn.cursor()
+            
+            cursor.execute(query)
+        self.table_ids["ProfileTable"] = 0
+
     def insert_tuple(self, tup, table_name="TestTable"):
         try:
             tuple_str = ""

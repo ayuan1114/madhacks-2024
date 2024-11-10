@@ -56,7 +56,10 @@ def cat_tickets(description: str) -> str:
 <<<<<<< HEAD
 =======
     
+<<<<<<< HEAD
 >>>>>>> 0708cd0 (updated api to store profiles in db)
+=======
+>>>>>>> fapi
     return "Misc"
 
 
@@ -65,6 +68,7 @@ def cat_tickets(description: str) -> str:
 async def create_profile(profile: Profile, response: Response):
     # check if profile exists
     query = f"SELECT * FROM TicketTable WHERE email = '{profile.email}' LIMIT 1"
+<<<<<<< HEAD
 <<<<<<< HEAD
     existing_profile = db.load_all_pd(query)
     if existing_profile.empty:
@@ -75,19 +79,29 @@ async def create_profile(profile: Profile, response: Response):
     return JSONResponse(content={"email": profile.email, "name": profile.name})
 =======
     existing_profile = db.load_query_pd(query)
+=======
+    existing_profile = db.load_query_pd("email", profile.email, "TicketTable")
+>>>>>>> fapi
     if not existing_profile.empty:
         response.status_code = 400
         return {"message": "Profile already exists."}
 
     # else, doesn't exist so create one
     profile_data = {"email": profile.email, "name": profile.name}
+<<<<<<< HEAD
     result = db.insert_profile(profile_data)
+=======
+    result = db.insert_tuple(profile_data, "Profiles")
+>>>>>>> fapi
     if result:
         return JSONResponse(content={"message": "Profile created successfully", "profile": result})
     else:
         response.status_code = 500
         return {"message": "Failed to create profile"}
+<<<<<<< HEAD
 >>>>>>> 0708cd0 (updated api to store profiles in db)
+=======
+>>>>>>> fapi
 
 # endpoint to retrieve profile info
 @app.get("/profile/{email}", status_code=200)
